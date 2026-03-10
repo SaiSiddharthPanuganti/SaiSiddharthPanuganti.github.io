@@ -114,24 +114,54 @@
     50% { opacity: 0.5; transform: scale(0.8); }
   }
   .hero-name {
+    margin-bottom: 28px;
+  }
+  .hero-name-label {
+    font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+    animation: fadeIn 0.6s 0.2s both;
+  }
+  .hero-name-main {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(3rem, 8vw, 7rem);
-    font-weight: 800; line-height: 0.9;
-    letter-spacing: -0.03em;
-    margin-bottom: 24px;
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
   }
-  .hero-name .line { display: block; overflow: hidden; }
-  .hero-name .line span {
-    display: block;
-    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  .typewriter-line {
+    display: flex; align-items: center; gap: 0;
+    min-height: 1.2em;
   }
-  .hero-name .line:nth-child(2) span { animation-delay: 0.1s; }
-  .hero-name .line:nth-child(3) span { animation-delay: 0.2s; }
-  @keyframes slideUp {
-    from { transform: translateY(110%); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+  .typewriter-line + .typewriter-line { margin-top: 2px; }
+  .tw-static {
+    color: var(--text);
   }
-  .hero-name .accent { color: var(--accent); }
+  .tw-accent {
+    color: var(--accent);
+  }
+  .tw-cursor {
+    display: inline-block;
+    width: 3px; background: var(--accent);
+    height: 1em; margin-left: 3px;
+    animation: blink 0.8s step-end infinite;
+    vertical-align: middle;
+    border-radius: 1px;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .hero-role-strip {
+    display: flex; align-items: center; gap: 0;
+    margin-top: 14px; overflow: hidden;
+    animation: fadeIn 0.6s 0.3s both;
+  }
+  .role-item {
+    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); padding: 0 16px;
+    border-right: 1px solid var(--border);
+  }
+  .role-item:first-child { padding-left: 0; }
+  .role-item:last-child { border-right: none; }
+  .role-item.active { color: var(--accent); }
   .hero-desc {
     font-size: 0.9rem; line-height: 1.8;
     color: var(--muted); max-width: 480px;
@@ -483,11 +513,28 @@
 <section id="hero">
   <div class="hero-content">
     <div class="hero-tag">Available for Opportunities</div>
-    <h1 class="hero-name">
-      <span class="line"><span>Sai</span></span>
-      <span class="line"><span>Siddharth</span></span>
-      <span class="line"><span class="accent">Panuganti.</span></span>
-    </h1>
+    <div class="hero-name">
+      <div class="hero-name-label">// Full Stack Dev &amp; ML Engineer</div>
+      <div class="hero-name-main">
+        <div class="typewriter-line">
+          <span class="tw-static" id="tw-line1"></span>
+          <span class="tw-cursor" id="tw-cur1" style="display:none"></span>
+        </div>
+        <div class="typewriter-line">
+          <span class="tw-static" id="tw-line2"></span>
+          <span class="tw-cursor" id="tw-cur2" style="display:none"></span>
+        </div>
+        <div class="typewriter-line">
+          <span class="tw-accent" id="tw-line3"></span>
+          <span class="tw-cursor" id="tw-cur3"></span>
+        </div>
+      </div>
+      <div class="hero-role-strip">
+        <span class="role-item active">Hyderabad, IN</span>
+        <span class="role-item">VCE · IT · 2027</span>
+        <span class="role-item">Open to Internships</span>
+      </div>
+    </div>
     <p class="hero-desc">
       Full-stack developer &amp; ML engineer crafting intelligent systems
       and immersive web experiences. Building at the intersection of
@@ -678,7 +725,7 @@
     Open to internships, collaborations, and exciting projects. Let's create something extraordinary.
   </p>
   <div class="contact-links reveal reveal-delay-1">
-    <a href="mailto:saisiddharthpanuganti@gmail.com" class="contact-link">
+    <a href="/cdn-cgi/l/email-protection#2350424a504a47474b4251574b53424d5644424d574a63444e424a4f0d404c4e" class="contact-link">
       <span>📧</span> Email Me
     </a>
     <a href="https://linkedin.com/in/Sai-Siddharth" class="contact-link" target="_blank">
@@ -695,7 +742,7 @@
   <span>Hyderabad, India · +91 6301727634</span>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ─── CURSOR ───────────────────────────────────────
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
@@ -867,7 +914,34 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.1 });
 revealEls.forEach(el => observer.observe(el));
 
-// ─── COUNTER ANIMATION ───────────────────────────
+// ─── TYPEWRITER ──────────────────────────────────
+(function() {
+  const lines = [
+    { el: 'tw-line1', cur: 'tw-cur1', text: 'Sai Siddharth' },
+    { el: 'tw-line2', cur: 'tw-cur2', text: 'Panuganti' },
+    { el: 'tw-line3', cur: 'tw-cur3', text: '// ML · FullStack · Builder.' },
+  ];
+  let li = 0, ci = 0;
+  function typeNext() {
+    if (li >= lines.length) return;
+    const { el, cur, text } = lines[li];
+    const elNode = document.getElementById(el);
+    const curNode = document.getElementById(cur);
+    curNode.style.display = 'inline-block';
+    if (ci < text.length) {
+      elNode.textContent += text[ci++];
+      setTimeout(typeNext, ci === 1 ? 300 : 55 + Math.random() * 30);
+    } else {
+      if (li < lines.length - 1) {
+        curNode.style.display = 'none';
+        li++; ci = 0;
+        setTimeout(typeNext, 220);
+      }
+    }
+  }
+  setTimeout(typeNext, 600);
+})();
+
 function animateCounter(el, target, isFloat) {
   const duration = 1500;
   const start = performance.now();
@@ -887,12 +961,4 @@ const cntObs = new IntersectionObserver(entries => {
     if (el.id === 'cnt1') animateCounter(el, 8.31, true);
     if (el.id === 'cnt2') animateCounter(el, 96, false);
     cntObs.unobserve(el);
-  });
-}, { threshold: 0.5 });
-['cnt1','cnt2'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) cntObs.observe(el);
-});
-</script>
-</body>
-</html>
+  
